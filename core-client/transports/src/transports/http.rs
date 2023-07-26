@@ -69,13 +69,6 @@ async fn do_connect(url: Uri) -> (RpcChannel, impl Future<Output = ()>) {
 		.buffer_unordered(max_parallel)
 		.for_each(|(response, sender)| async {
 			let result = match response {
-				Ok(ref res) if !res.status().is_success() => {
-					log::trace!("http result status {}", res.status());
-					Err(RpcError::Client(format!(
-						"Unexpected response status code: {}",
-						res.status()
-					)))
-				}
 				Err(err) => Err(RpcError::Other(Box::new(err))),
 				Ok(res) => {
 					hyper::body::to_bytes(res.into_body())
